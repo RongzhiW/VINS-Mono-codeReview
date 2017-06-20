@@ -54,14 +54,20 @@ void readParameters(ros::NodeHandle &n)
     }
 
     VINS_FOLDER_PATH = readParam<std::string>(n, "vins_folder");
+    //"image_topic"
     fsSettings["image_topic"] >> IMAGE_TOPIC;
+    //"imu_topic"
     fsSettings["imu_topic"] >> IMU_TOPIC;
 
+    //每帧的列和行数
     IMAGE_COL = fsSettings["image_width"];
     IMAGE_ROW = fsSettings["image_height"];
 
+    //优化过程允许最长时间
     SOLVER_TIME = fsSettings["max_solver_time"];
+    //优化过程允许最大迭代次数
     NUM_ITERATIONS = fsSettings["max_num_iterations"];
+    //关键帧间的最小视差
     MIN_PARALLAX = fsSettings["keyframe_parallax"];
     MIN_PARALLAX = MIN_PARALLAX / FOCAL_LENGTH;
 
@@ -70,12 +76,18 @@ void readParameters(ros::NodeHandle &n)
     std::ofstream foutC(VINS_RESULT_PATH, std::ios::out);
     foutC.close();
 
+    //加速度噪声标准差
     ACC_N = fsSettings["acc_n"];
+    //加速度bias随机游走噪声标准差
     ACC_W = fsSettings["acc_w"];
+    //陀螺仪噪声方差
     GYR_N = fsSettings["gyr_n"];
+    //陀螺仪bias随机游走噪声方差
     GYR_W = fsSettings["gyr_w"];
+    //9.8
     G.z() = fsSettings["g_norm"];
 
+    //判断外参属于哪种情况
     ESTIMATE_EXTRINSIC = fsSettings["estimate_extrinsic"];
     if (ESTIMATE_EXTRINSIC == 2)
     {
@@ -97,6 +109,7 @@ void readParameters(ros::NodeHandle &n)
         if (ESTIMATE_EXTRINSIC == 0)
             ROS_WARN(" fix extrinsic param ");
 
+        //外参，包括旋转和平移
         cv::Mat cv_R, cv_T;
         fsSettings["extrinsicRotation"] >> cv_R;
         fsSettings["extrinsicTranslation"] >> cv_T;
@@ -114,7 +127,7 @@ void readParameters(ros::NodeHandle &n)
     } 
 
 
-
+    //回环是否启动标志
     LOOP_CLOSURE = fsSettings["loop_closure"];
     if (LOOP_CLOSURE == 1)
     {
@@ -122,13 +135,16 @@ void readParameters(ros::NodeHandle &n)
         fsSettings["pattern_file"] >> PATTERN_FILE;
         VOC_FILE = VINS_FOLDER_PATH + VOC_FILE;
         PATTERN_FILE = VINS_FOLDER_PATH + PATTERN_FILE;
+        //最少回环候选帧数？
         MIN_LOOP_NUM = fsSettings["min_loop_num"];
         CAM_NAMES = config_file;
     }
 
-
+    //初始深度?
     INIT_DEPTH = 5.0;
+    //加速度bias阈值
     BIAS_ACC_THRESHOLD = 0.1;
+    //陀螺仪bias阈值
     BIAS_GYR_THRESHOLD = 0.1;
 
     fsSettings.release();

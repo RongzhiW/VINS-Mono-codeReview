@@ -568,14 +568,17 @@ int main(int argc, char **argv)
 {
     ros::init(argc, argv, "vins_estimator");
     ros::NodeHandle n("~");
+    //提供格式输出，定义输出信息的优先级别。只输出所有优先级大于info的信息
     ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Info);
+    //从配置文件中读入$(find feature_tracker)/../config/euroc/euroc_config.yaml"定义的参数
     readParameters(n);
+    //为类estimator设置cam-imu外参等
     estimator.setParameter();
 #ifdef EIGEN_DONT_PARALLELIZE
     ROS_DEBUG("EIGEN_DONT_PARALLELIZE");
 #endif
     ROS_WARN("waiting for image and imu...");
-
+    //注册各种topic的发布，以及设置显示相关的参数
     registerPub(n);
 
     ros::Subscriber sub_imu = n.subscribe(IMU_TOPIC, 2000, imu_callback, ros::TransportHints().tcpNoDelay());

@@ -3,13 +3,20 @@
 #common parameters
 imu_topic: "/imu0"
 image_topic: "/cam0/image_raw"
+
+#kitti dataset
+#imu_topic: "/kitti/oxts/imu"
+#image_topic: "/kitti/camera_gray_left/image_raw"
 output_path: "/config/euroc/vins_result.csv"         # vins outputs will be wrttento vins_folder_path + output_path
+
 
 #camera calibration 
 model_type: PINHOLE
 camera_name: camera
 image_width: 752
 image_height: 480
+#image_width: 1392
+#image_height: 512
 distortion_parameters:
    k1: -2.917e-01
    k2: 8.228e-02
@@ -20,6 +27,17 @@ projection_parameters:
    fy: 4.603e+02
    cx: 3.630e+02
    cy: 2.481e+02
+
+#distortion_parameters:
+#   k1: -2.917e-01
+#   k2: 8.228e-02
+#   p1: 5.333e-05
+#   p2: -1.578e-04
+#projection_parameters:
+#   fx: 9.842439e+02
+#   fy: 9.808141e+02
+#   cx: 6.900000e+02
+#   cy: 2.331966e+02
 
 # Extrinsic parameter between IMU and Camera.
 estimate_extrinsic: 1   # 0  Have an accurate extrinsic parameters. We will trust the following imu^R_cam, imu^T_cam, don't change it.
